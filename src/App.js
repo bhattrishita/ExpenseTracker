@@ -4,6 +4,10 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Dashboard from './components/Dashboard';
 import './App.css';
+import axios from 'axios';
+
+// Set default base URL for all axios requests
+axios.defaults.baseURL = "http://localhost:8080";
 
 // Separate Navbar component
 const Navbar = () => {
@@ -24,6 +28,17 @@ const Navbar = () => {
 
 // Landing page component
 const LandingPage = ({ showScrollTop, scrollToTop }) => {
+  const [testMessage, setTestMessage] = useState('');
+  
+  const testBackendConnection = async () => {
+    try {
+      const response = await axios.get('/api/test');
+      setTestMessage('Backend connected successfully! Response: ' + JSON.stringify(response.data));
+    } catch (error) {
+      setTestMessage('Error connecting to backend: ' + error.message);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -35,7 +50,13 @@ const LandingPage = ({ showScrollTop, scrollToTop }) => {
             <p>The smart way to track group expenses, split bills, and settle balances with friends, roommates, and groups. No more awkward money talks!</p>
             <div className="hero-buttons">
               <button className="cta-button">Start Tracking</button>
+              <button onClick={testBackendConnection} className="cta-button" style={{ marginLeft: '10px' }}>Test Backend</button>
             </div>
+            {testMessage && (
+              <div style={{ marginTop: '20px', padding: '10px', backgroundColor: testMessage.includes('Error') ? '#ffe6e6' : '#e6ffe6', borderRadius: '5px' }}>
+                {testMessage}
+              </div>
+            )}
           </div>
           <div className="hero-image">
             <div className="feature-preview">
